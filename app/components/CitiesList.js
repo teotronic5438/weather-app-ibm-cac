@@ -34,13 +34,14 @@ const CitiesList = () => {
 
 const styles = StyleSheet.create({
     cityContainer: {
-        backgroundColor: '#A46877',
-        marginBottom: 7,
-        paddingVertical: 10,
-        paddingHorizontal: 7
     },
     cityButton: {
         backgroundColor: '#A46877',
+        borderBottomColor: '#634F5F',
+        borderBottomWidth: 2,
+        marginVertical: 3,
+        marginHorizontal: 10,
+        paddingVertical: 15
     },
 
 })
