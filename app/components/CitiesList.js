@@ -3,13 +3,8 @@ import { FlatList, StyleSheet, Text, View } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { Button } from 'react-native-elements';
 
-// Array temporal con ciudades
-// Más adelante se van a traer de la base de datos
 
-const cities = ['Buenos Aires', 'Mendoza', 'Córdoba', 'Iruya', 'Ushuaia'];
-
-
-const CitiesList = () => {
+const CitiesList = ({cities}) => {
 
     const navigation = useNavigation();
 

@@ -1,9 +1,21 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { Button, Icon, Input } from 'react-native-elements';
 import CitiesList from '../../components/CitiesList';
+import { useForm } from '../../hooks/useForm';
+
+// Array temporal con ciudades
+// Más adelante se van a traer de la base de datos
+
+const cities = ['Buenos Aires', 'Mendoza', 'Córdoba', 'Iruya', 'Ushuaia'];
 
 const HomeScreen = () => {
+
+    const [searchValue, setSearchValue] = useState('');
+
+    const handleSearchChange = (e) => {
+        setSearchValue(e.nativeEvent.text);
+    }
 
     return (
         <>
@@ -31,11 +43,12 @@ const HomeScreen = () => {
                         name: 'search',
                         color: '#bbb'
                     }}
+                    onChange={(e) => handleSearchChange(e)}
                 />
             </View>
 
             {/* Listado de ciudades */}
-            <CitiesList />
+            <CitiesList cities={cities} />
 
 
             {/* Botón de agregar ciudad */}
