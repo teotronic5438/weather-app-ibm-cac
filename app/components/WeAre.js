@@ -1,9 +1,20 @@
 import React from "react";
-import { View, Text, Stylesheet, Linking } from "react-native";
+import { View, Text, StyleSheet, Linking } from "react-native";
+import { Overlay } from 'react-native-elements';
 
-export default function WeAre(){
+export default function WeAre({isVisible, setIsVisible}) {
+
+  const closeModal = () => setIsVisible(false);
+
   return(
-    <View style={styles.view}>
+    <Overlay
+      style={styles.view}
+      isVisible={isVisible}
+      windowBackgroundColor="rgba(0,0,0,0.5)"
+      overlayBackgroundColor="transparent"
+      overlayStyle={styles.overlay}
+      onBackdropPress={closeModal}
+    >
       <Text Style={styles.title}>Quiénes somos?</Text>
       <Text style={styles.text}>
         Somos un grupo de estudiantes egresados del Programa Codo a Codo 
@@ -36,7 +47,7 @@ export default function WeAre(){
         a la vez de una forma rápida y sencilla. Para agregar una ciudad a tu listado sólo 
         tienes que tocar en el + y buscar en el mapa la ciudad que deseas agregar.
       </Text>
-    </View>
+    </Overlay>
   )
 }
 
@@ -52,5 +63,10 @@ const styles = StyleSheet.create({
   },
   links:{
 
+  },
+  overlay: {
+    height: "auto",
+    width: "90%",
+    backgroundColor: "#fff",
   }
 })

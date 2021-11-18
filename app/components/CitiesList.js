@@ -17,7 +17,7 @@ const CitiesList = ({cities}) => {
                     <Button 
                         containerStyle={styles.cityContainer}
                         buttonStyle={styles.cityButton}
-                        title={item}
+                        title={item.name}
                         onPress={() => navigation.navigate('city')}
                     />
                 )}

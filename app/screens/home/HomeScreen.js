@@ -1,20 +1,54 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { Button, Icon, Input } from 'react-native-elements';
+import { firebaseApp } from '../../utils/firebase';
+import firebase from 'firebase/app';
+import 'firebase/firestore';
+const db = firebase.firestore(firebaseApp);
 import CitiesList from '../../components/CitiesList';
-import { useForm } from '../../hooks/useForm';
+import Loading from '../../components/Loading';
+import WeAre from '../../components/WeAre';
 
 // Array temporal con ciudades
 // Más adelante se van a traer de la base de datos
 
-const cities = ['Buenos Aires', 'Mendoza', 'Córdoba', 'Iruya', 'Ushuaia'];
 
 const HomeScreen = () => {
 
-    const [searchValue, setSearchValue] = useState('');
+    const [cities, setCities] = useState([]);
+    const [filteredCities, setFilteredCities] = useState([]);
+    const [loadingCities, setLoadingCities] = useState(false);
+    const [isModalVisible, setIsModalVisible] = useState(false);
+
+    useEffect(() => {
+        // Hace un fetch a firestore de las ciudades guardadas
+        
+        setLoadingCities(true);
+
+        db.collection('cities').get().then((response) => {
+            let citiesArray = [];
+            response.forEach((doc) => {
+                citiesArray = [...citiesArray, doc.data()]
+            });
+            setLoadingCities(false);
+            setFilteredCities(citiesArray);
+            setCities(citiesArray);
+        });
+        
+    }, [])
 
     const handleSearchChange = (e) => {
-        setSearchValue(e.nativeEvent.text);
+
+        // Maneja la búsqueda de ciudades
+        const query = e.nativeEvent.text;
+
+        if (query !== '') {
+            setFilteredCities(cities.filter(city => {
+                return city.name.toLowerCase().includes(query.toLowerCase());
+            }));
+        } else {
+            setFilteredCities(cities);
+        }
     }
 
     return (
@@ -31,7 +65,7 @@ const HomeScreen = () => {
                         color="#ddd"
                     />
                 }
-                onPress={() => console.log('mostrar about')}
+                onPress={() => setIsModalVisible(true)}
             />
 
             {/* Buscador de ciudades */}
@@ -48,7 +82,14 @@ const HomeScreen = () => {
             </View>
 
             {/* Listado de ciudades */}
-            <CitiesList cities={cities} />
+            {
+                cities.length === 0
+                ?
+                <Loading isVisible={loadingCities} text='Cargando ciudades' />
+                :
+                <CitiesList cities={filteredCities} />
+            }
+            
 
 
             {/* Botón de agregar ciudad */}
@@ -62,8 +103,11 @@ const HomeScreen = () => {
                     color="white"
                     />
                 }
-                onPress={() => console.log('agregar modal')}
+                onPress={() => console.log(cities)}
             />
+            
+           
+            <WeAre isVisible={isModalVisible} setIsVisible={setIsModalVisible} />
         </>
     )
 }
