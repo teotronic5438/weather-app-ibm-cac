@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from "react";
-import { StyleSheet, View, Text, ToastAndroid} from "react-native";
+import { StyleSheet, View, Text, ToastAndroid, ActivityIndicator} from "react-native";
 import { Input, Button } from "react-native-elements";
 import MapView from "react-native-maps"
 import * as Location from "expo-location";
@@ -71,6 +71,14 @@ export default function AddCittyForm(props) {
         
     };
 
+    if(!location){
+        return(
+            <View style={styles.container}>
+                <ActivityIndicator size="large" color="#A46877" />
+            </View>
+        );
+    }
+
     return(
         <View style={styles.view}>
 
@@ -133,8 +141,6 @@ export default function AddCittyForm(props) {
 
 
             )}
-
-
         </View>
     )
 }
@@ -183,5 +189,11 @@ const styles = StyleSheet.create({
         color: "#A46877",
         fontWeight: "bold",
         fontSize: 15,
-    }
+    },
+    container: {
+        flex: 1,
+        justifyContent: "center",
+        alignItems: "center",
+        height: 100,
+    },
 });

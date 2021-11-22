@@ -110,7 +110,6 @@ const HomeScreen = () => {
                     />
                 }
                 onPress={() => { 
-                    console.log('agregar modal');
                     setRenderComponent(
                         <AddCittyForm 
                             setShowModal={setShowModal}
