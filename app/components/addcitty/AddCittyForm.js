@@ -1,12 +1,23 @@
 import React, {useState, useEffect} from "react";
 import { StyleSheet, View, Text, ToastAndroid} from "react-native";
 import { Input, Button } from "react-native-elements";
-import * as Location from "expo-location";
 import MapView from "react-native-maps"
+import * as Location from "expo-location";
+import * as Permissions from "expo-permissions";
+// import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
+// import config from "../../../config"
+
+import { firebaseApp } from "../../utils/firebase";
+import firebase from "firebase/app";
+import "firebase/firestore";
+
+const db = firebase.firestore(firebaseApp);
+
 
 export default function AddCittyForm(props) {
-    const {setShowModal, setLocationCity} = props;
+    const {setShowModal, locationCity, setLocationCity} = props;
     const [location, setLocation] = useState(null);
+    const [cityName, setCityName] = useState("")
     // console.log(props);
 
     useEffect(() => {
@@ -26,53 +37,103 @@ export default function AddCittyForm(props) {
                     latitudeDelta: 0.001,
                     longitudeDelta: 0.001,
                 });
-                console.log(location);
+                // console.log("configuraste tu ubicacion actual");
             }
         })()
-        
+
     }, [])
 
+    const saveUbication = async ()=> {
+        await Promise.all(
+            db.collection("cities")
+            .add({
+                name: cityName,
+                latitude: location.latitude,
+                longitude: location.longitude,
+            })
+            .then(()=> {
+                console.log("informacion cargada exitosamente");
+            })
+        )
+
+    }
+
     const onSubmit = () => {
-        console.log("Ciudad Agregada");
-        setShowModal(false);    // por ahora, falta subir conexion a firebase y validar info
+        if(!cityName){
+            ToastAndroid.show("El nombre de la ciudad no puede quedar vacio.",
+            ToastAndroid.SHORT,
+            ToastAndroid.CENTER)
+        } else {
+            setLocationCity(location)
+            saveUbication().then(()=>setShowModal(false))
+            
+        }
+        
     };
 
     return(
         <View style={styles.view}>
-            <Input
-                placeholder="Nombre de la ciudad"
-                containerStyle={styles.input}
-            />
+
             {location && (
-                <MapView
+                <>
+                    <View style={styles.viewTitleSearch}>
+                        <Text style={styles.textTitleSearch}>Desplace el mapa hasta la ciudad elegida</Text>
+                    </View>
+                    <MapView
                     style={styles.mapStyle}
                     initialRegion={location}
                     showsUserLocation={true}
                     onRegionChange={(region) => setLocation(region)}
-                >
-                    <MapView.Marker 
-                        coordinate={{
-                            latitude: location.latitude,
-                            longitude: location.longitude,
-                        }}
-                    />
-                </MapView>
+                    >
+                        <MapView.Marker
+                            coordinate={{
+                                latitude: location.latitude,
+                                longitude: location.longitude,
+                            }}
+                        />
+                    </MapView>
+                    <View style={styles.cssSearch}>
+                        {/* <GooglePlacesAutocomplete
+                            placeholder='Ingrese la ciudad a Buscar'
+                            onPress={(data, details = null) => {
+                                // 'details' is provided when fetchDetails = true
+                                console.log(data, details);
+                            }}
+                            query={{
+                                key: config.googpleApi,
+                                language: 'es',
+                            }}
+                            enablePoweredByContainer={false}
+                            fetchDetails={true}
+                            styles={{listView:{height:100}}}
+                            style={styles.inputSearch}
+                        /> */}
+                        <Input
+                            placeholder="Nombre de la ciudad"
+                            containerStyle={styles.input}
+                            onChange={(e) => setCityName(e.nativeEvent.text)}
+                        />
+                    </View>
+                    <View style={styles.viewMapBtn}>
+                        <Button
+                            title="Cancelar Ciudad"
+                            containerStyle={styles.btnContainer}
+                            buttonStyle={styles.btnCancel}
+                            onPress={() => setShowModal(false)}
+                        />
+                        <Button
+                            title="Agregar Ciudad"
+                            containerStyle={styles.btnContainer}
+                            buttonStyle={styles.btnSave}
+                            onPress={onSubmit}
+                        />
+                    </View>
+                </>
+
+
+
             )}
 
-            <View style={styles.viewMapBtn}>
-                <Button 
-                    title="Cancelar Ciudad"
-                    containerStyle={styles.btnContainer}
-                    buttonStyle={styles.btnCancel}
-                    onPress={() => setShowModal(false)}
-                />
-                <Button 
-                    title="Agregar Ciudad"
-                    containerStyle={styles.btnContainer}
-                    buttonStyle={styles.btnSave}
-                    onPress={onSubmit}
-                />
-            </View>
 
         </View>
     )
@@ -108,6 +169,19 @@ const styles = StyleSheet.create({
     },
     mapStyle: {
         width: '100%',
-        height: 500,
+        height: 300,
+    },
+    cssSearch: {
+        height: 50,
+        width: "100%",
+        marginTop: 15,
+    },
+    viewTitleSearch: {
+        margin: 5,
+    },
+    textTitleSearch: {
+        color: "#A46877",
+        fontWeight: "bold",
+        fontSize: 15,
     }
 });

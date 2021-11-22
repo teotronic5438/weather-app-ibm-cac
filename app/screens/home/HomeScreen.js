@@ -14,6 +14,8 @@ import AddCittyForm from '../../components/addcitty/AddCittyForm';
 // Más adelante se van a traer de la base de datos
 
 
+
+
 const HomeScreen = () => {
 
     const [cities, setCities] = useState([]);
@@ -110,7 +112,11 @@ const HomeScreen = () => {
                 onPress={() => { 
                     console.log('agregar modal');
                     setRenderComponent(
-                        <AddCittyForm setShowModal={setShowModal}  setLocationCity={setLocationCity}/>
+                        <AddCittyForm 
+                            setShowModal={setShowModal}
+                            locationCity={locationCity}
+                            setLocationCity={setLocationCity}
+                        />
                     );
                     setShowModal(true);
                 }}
