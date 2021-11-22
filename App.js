@@ -11,6 +11,8 @@ export default function App() {
   );
 }
 
+// probando conexion a Git rama dev
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
