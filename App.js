@@ -1,8 +1,9 @@
-import React from 'react';
-import Navigation from './app/components/Navigation';
+import React from "react";
+import { LogBox } from "react-native";
+import Navigation from "./app/navigations/Navigation";
 
+LogBox.ignoreAllLogs();
 
 export default function App() {
-
-  return <Navigation />
+  return <Navigation />;
 }
